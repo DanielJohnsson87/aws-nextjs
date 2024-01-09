@@ -11,7 +11,7 @@ const amplifyHostingStack = new AmplifyHostingStack(
 	{
 		// Name given to plaintext secret in secretsManager.
 		// When creating the token scope on Github, only the admin:repo_hook scope is needed
-		githubOauthTokenName: "github-token",
+		githubOauthTokenName: "nextjs-aws-github-token",
 		// swap for your github username
 		owner: "DanielJohnsson87",
 		// swap for your github frontend repo
