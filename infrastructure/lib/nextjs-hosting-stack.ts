@@ -2,11 +2,11 @@ import {
     App,
     GitHubSourceCodeProvider,
     RedirectStatus,
-} from '@aws-cdk/aws-amplify-alpha'
-import { CfnOutput, SecretValue, Stack, StackProps } from 'aws-cdk-lib'
-import { CfnApp } from 'aws-cdk-lib/aws-amplify'
-import * as codebuild from 'aws-cdk-lib/aws-codebuild'
-import { Construct } from 'constructs'
+} from "@aws-cdk/aws-amplify-alpha"
+import { CfnOutput, SecretValue, Stack, StackProps } from "aws-cdk-lib"
+import { CfnApp } from "aws-cdk-lib/aws-amplify"
+import * as codebuild from "aws-cdk-lib/aws-codebuild"
+import { Construct } from "constructs"
 
 interface HostingStackProps extends StackProps {
 	readonly owner: string
@@ -18,8 +18,8 @@ interface HostingStackProps extends StackProps {
 export class AmplifyHostingStack extends Stack {
 	constructor(scope: Construct, id: string, props: HostingStackProps) {
 		super(scope, id, props)
-		const amplifyApp = new App(this, 'AwsNextjsApp', {
-			appName: 'Aws NextJs App Test',
+		const amplifyApp = new App(this, "AwsNextjsApp", {
+			appName: "Aws NextJs App Test",
 			sourceCodeProvider: new GitHubSourceCodeProvider({
 				owner: props.owner,
 				repository: props.repository,
@@ -28,8 +28,8 @@ export class AmplifyHostingStack extends Stack {
 			autoBranchDeletion: true,
 			customRules: [
 				{
-					source: '/<*>',
-					target: '	/index.html',
+					source: "/<*>",
+					target: "	/index.html",
 					status: RedirectStatus.NOT_FOUND_REWRITE,
 				},
 			],
@@ -39,32 +39,32 @@ export class AmplifyHostingStack extends Stack {
 				frontend: {
 					phases: {
 						preBuild: {
-							commands: ['npm ci'],
+							commands: ["cd app", "npm ci"],
 						},
 						build: {
-							commands: ['npm run build'],
+							commands: ["npm run build"],
 						},
 					},
 					artifacts: {
-						baseDirectory: '.next',
-						files: ['**/*'],
+						baseDirectory: ".next",
+						files: ["**/*"],
 					},
 					cache: {
-						paths: ['node_modules/**/*'],
+						paths: ["node_modules/**/*"],
 					},
 				},
 			}),
 		})
 
-		amplifyApp.addBranch('main', {
-			stage: 'PRODUCTION',
+		amplifyApp.addBranch("main", {
+			stage: "PRODUCTION",
 		})
 
 		//Drop down to L1 to allow new NextJS architecture
 		const cfnAmplifyApp = amplifyApp.node.defaultChild as CfnApp
-		cfnAmplifyApp.platform = 'WEB_COMPUTE'
+		cfnAmplifyApp.platform = "WEB_COMPUTE"
 
-		new CfnOutput(this, 'appId', {
+		new CfnOutput(this, "appId", {
 			value: amplifyApp.appId,
 		})
 	}
